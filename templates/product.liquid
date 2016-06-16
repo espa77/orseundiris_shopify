@@ -1,0 +1,227 @@
+<article id="{{product.handle}}" class="product container">
+
+<div class="row">
+	<div class="col-md-12">
+
+	{% include 'breadcrumb' %}
+
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-6 col-sm-6 product-images">
+
+	{% if product.compare_at_price_max > product.price %}
+		<div class="sale-badge">{{ 'products.general.sale' | t }}</div>
+	{% endif %}
+
+		<!-- The first image pulled from the product is a large image (480x480), subsequent images are "compact" which is 160x160 -->
+		<div id="product_images" class="hidden-xs">
+			{% for image in product.images %}
+				{% if forloop.first %}
+				<!--
+					<a href="{{ image | product_img_url: 'original' }}" title="{{ image.alt | escape }}" id="zoom1" class="cloud-zoom" rel="position: 'inside', showTitle: false">
+						<img src="{{ image | product_img_url: 'original'}}" alt="{{ image.alt | escape }}" class="product-main-image"/>
+					</a>
+				-->
+
+					{% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+					<div class="featured-image-div">
+						<img src="{{ featured_image | img_url: 'master' }}" alt="{{ featured_image.alt | escape }}" class="product-main-image" />
+					</div>
+
+				{% endif %}
+			{% endfor %}
+
+			{% if product.images.size > 1 %}
+			<div class="row">
+				<ul id="product-thumbnails">
+				{% for image in product.images %}
+					<li class="col-md-3 col-sm-4{% cycle ' alpha clearcolumn', '', '', ' omega' %}">
+						<a href="{{ image | product_img_url: 'master' }}" title="{{ image.alt | escape }}" class="image-swap">
+							<img src="{{ image | product_img_url: 'master'}}" alt="{{ image.alt | escape }}" />
+						</a>
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
+
+		</div>
+
+		<div id="mobile-product-images" class="visible-xs">
+
+		<ul id="product-thumbnails">
+		{% for image in product.images %}
+			<li class="two columns{% cycle ' alpha clearcolumn', '', '', ' omega' %}">
+				<img src="{{ image | product_img_url: 'master'}}" alt="{{ image.alt | escape }}" />
+			</li>
+		{% endfor %}
+		</ul>
+
+
+		</div>
+
+	</div>
+
+	<div class="col-md-6 col-sm-6">
+
+	<section class="entry-content">
+
+			<h1 class="custom-font product-description-header">{{ product.title }}</h1>
+			<h3 class="custom-font" id="price-field"></h3>
+
+						<div class="product-description-wrapper">
+							{{ product.description }}
+						</div>
+
+{% if product.available %}
+	<form action="/cart/add" method="post">
+	{% if product.variants.size > 1  %}
+	<div id="product-variants">
+		<select id="product-select" name='id' class="form-control">
+			{% for variant in product.variants %}
+			<option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+			{% endfor %}
+		</select>
+		{% comment %}
+		<div class="selector-wrapper">
+		<label for="quantity">{{ 'products.product.quantity' | t }}</label>
+			<select id="quantity" name="quantity">
+			{% for i in (1..10) %}
+			<option value="{{ i }}">{{ i }}</option>
+			{% endfor %}
+			</select>
+		</div>
+		{% endcomment %}
+	</div>
+		{% if product.compare_at_price_max > product.price %}
+			<h5 class="custom-font compare-at-price">{{ product.compare_at_price_max | money }}</h5>
+		{% endif %}
+		<h3 class="custom-font" id="price-field"></h3>
+	{% else %}
+		<div style="visibility: hidden; height: 1px;">
+			<select id="product-select" name='id' class="form-control">
+			{% for variant in product.variants %}
+			<option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+			{% endfor %}
+			</select>
+		</div>
+		{% if product.compare_at_price_max > product.price_min %}
+		<h5 class="custom-font compare-at-price">{{ product.compare_at_price_max | money }}</h5>
+		{% endif %}
+		<h3 class="custom-font product-description-header">{{ product.price | money }}</h3>
+	{% endif %}
+	<input type="submit" name="add" value="{{ 'products.product.add_to_cart' | t }}" id="purchase" class="btn btn-success" />
+	</form>
+{% else %}
+<div class="product-out-of-stock">{{ 'products.product.sorry_stock' | t }}</div>
+{% endif %}
+
+		{% if settings.share_prod_on_twitter or  settings.share_prod_on_facebook or  settings.share_prod_on_pinterest  or  settings.share_prod_on_googleplus %}
+
+		<div class="row">
+
+		<div id="sharing">
+
+
+			{% if settings.share_prod_on_twitter %}
+			<a class="glyph twitter" href="http://twitter.com/home?status=Check%20out%20this%20product: {{ shop.url }}{{ product.url }}">
+				<span class="fa-stack fa-lg">
+					<i class="fa fa-circle fa-stack-2x"></i>
+					<i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+				</span>
+			</a>
+			{% endif %}
+
+			{% if settings.share_prod_on_facebook %}
+				<a class="glyph facebook" href="http://www.facebook.com/sharer.php?u={{ shop.url }}{{ product.url }}&t={{ product.title }}">
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-circle fa-stack-2x"></i>
+						<i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+					</span>
+				</a>
+			{% endif %}
+
+			{% if settings.share_prod_on_googleplus %}
+				<a class="glyph googleplus" href="https://plus.google.com/share?url={{ shop.url }}{{ product.url }}" onclick="javascript:window.open(this.href,  '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;">
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-circle fa-stack-2x"></i>
+						<i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+					</span>
+				</a>
+			{% endif %}
+
+			{% if settings.share_prod_on_pinterest %}
+				<a href="//pinterest.com/pin/create/button/?url={{ shop.url }}{{ product.url }}&media=http:{{ product.featured_image | product_img_url: '1024x1024' | split: '?' | first }}&description={{ product.title | strip_html | escape | replace: ' ', '%20' }}{% for t in product.tags %}{% assign tag = t | handle %}{{ '%20%23' | append: tag }}{% endfor %}" data-pin-do="buttonPin" data-pin-config="none">
+					<span class="fa-stack fa-lg">
+						<i class="fa fa-circle fa-stack-2x"></i>
+						<i class="fa fa-pinterest fa-stack-1x fa-inverse"></i>
+					</span>
+				</a>
+			{% endif %}
+
+		</div>
+
+		</div>
+
+		{% endif %}
+
+	</section>
+
+	</div>
+
+</div>
+
+{% if template contains 'product' %}
+
+
+{% if collection == null or collection.handle == 'frontpage' or collection.handle == 'all' %}
+{% assign found_a_collection = false %}
+{% for c in product.collections %}
+  {% if found_a_collection == false and c.handle != 'frontpage' and c.handle != 'all' and c.all_products_count > 1 %}
+    {% assign found_a_collection = true %}
+    {% assign collection = c %}
+  {% endif %}
+{% endfor %}
+{% endif %}
+
+{% if collection and collection.products_count > 1 %}
+
+<div class="row">
+
+	<div class="col-md-12">
+
+	<div class="title-bar custom-font">
+		<h2>Related Products</h2>
+	</div>
+
+	</div>
+
+</div>
+
+<div class="row">
+
+	<ul class="product-grid clearfix">
+  {% assign current_product = product %}
+  {% assign current_product_found = false %}
+  {% for product in collection.products limit: 5 %}
+    {% if product.handle == current_product.handle %}
+       {% assign current_product_found = true %}
+    {% else %}
+       {% unless current_product_found == false and forloop.last %}
+			<li class="col-md-3{% cycle ' alpha', '', ' mobile', ' omega' %} col-sm-6">
+				{% include 'product-listing' %}
+			</li>
+       {% endunless %}
+    {% endif %}
+  {% endfor %}
+  </ul>
+{% endif %}
+
+</div>
+
+{% endif %}
+
+</article>

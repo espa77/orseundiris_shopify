@@ -1,0 +1,23 @@
+<div class="indiv-product">
+
+	{% if product.compare_at_price_max > product.price %}
+		<div class="sale-badge">{{ 'products.general.sale' | t }}</div>
+	{% endif %}
+
+	<a href="{{ product.url | within: collection }}">
+		<img src="{{ product.featured_image | product_img_url: 'grande' }}'" data-adaptive-background='1'>
+	</a>
+</div>
+
+<div class="hp-title custom-font">
+<a href="{{ product.url | within: collection }}">
+{{product.title}}<br />
+	<span class="money-styling">
+  {% if product.price_varies %}
+    <small>{{ 'products.general.from' | t }}</small> {{ product.price_min | money }}
+  {% else %}
+    {{ product.price_min | money }}
+  {% endif %}
+</span>
+</a>
+</div>

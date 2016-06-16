@@ -1,0 +1,155 @@
+<footer id="footer-block">
+
+<div class="container">
+
+<!-- Start Text Block -->
+{% assign article = pages.frontpage %}
+{% if article.content != "" %}
+
+<div class="row">
+
+	<div class="col-md-12">
+
+		<div class="title-bar custom-font">
+			<h2>{{ article.title }}</h2>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="row">
+
+	<div class="col-md-6 col-md-offset-3">
+
+		<div class="article-body textile">
+			{{ article.content }}
+		</div>
+
+	</div>
+
+</div>
+
+{% endif %}
+<!-- End Text Block -->
+
+{% if settings.show-instagram-homepage %}
+
+<div class="row">
+
+	<div class="col-md-12">
+
+		<div class="instagram-wrapper">
+
+			<div class="title-bar custom-font">
+				<h2>{{ 'layout.footer.instagram_title' | t }}</h2>
+			</div>
+
+			<div id="instafeed" class="row"></div>
+
+		</div>
+
+	</div>
+
+</div>
+
+{% endif %}
+
+<!-- Start Text Block -->
+
+{% if article.content != "" %}
+
+<div class="row">
+
+	<div class="col-md-12">
+
+	<div class="title-bar custom-font">
+		<h2>{{ 'layout.footer.news_title' | t }}</h2>
+	</div>
+
+	</div>
+
+</div>
+
+<div class="row footer-blog-articles">
+
+  {% for article in blogs['music'].articles limit:3 %}
+
+    <div class="col-md-4">
+
+	    <div class="footer-blog-article-wrapper">
+
+			<h2 class="indiv-blog-title"><a href="{{article.url}}">{{ article.title }}</a></h2>
+
+		      {% comment %}
+		        Add a surrounding div with class 'rte' to anything that will come from the rich text editor.
+		        Since this is just a listing page, you can either use the excerpt or truncate the full article.
+		      {% endcomment %}
+		      <div class="rte">
+		        {% if article.excerpt.size > 0 %}
+		          {{ article.excerpt }}
+		        {% else %}
+		          <p>{{ article.content | strip_html | truncatewords: 20 }}</p>
+		        {% endif %}
+		      </div>
+
+		      <p class="footer-blog-read-more-wrapper"><a class="btn btn-default" href="{{ article.url }}">{{ 'layout.footer.read_more' | t }}</a></p>
+
+	      </div>
+
+    </div>
+
+  {% endfor %}
+
+</div>
+
+{% endif %}
+<!-- End Text Block -->
+
+<!-- Start Newsletter -->
+<div class="row">
+
+	<div class="col-md-12">
+
+		<div class="title-bar custom-font">
+			<h2>{{ 'general.newsletter_form.header' | t }}</h2>
+		</div>
+
+	</div>
+
+</div>
+
+<div class="row">
+
+	<div class="col-md-6 col-md-offset-3 mailing-list-footer">
+
+		{% form 'customer' %}
+
+		  {% if form.posted_successfully? %}
+		    <p class="alert-success alert">{{ 'general.newsletter_form.thanks' | t }}</p>
+		  {% endif %}
+
+		  {% include 'form-errors-custom' %}
+
+		  <input type="hidden" id="contact_tags" name="contact[tags]" value="prospect,newsletter"/>
+		  <div id="newsletter-signup" class="form-group">
+		    <input type="hidden" id="newsletter-first-name" name="contact[first_name]" value="Subscriber" />
+		    <input type="hidden" id="newsletter-last-name" name="contact[last_name]" value="Newsletter" />
+		    <div id="newsletter-email-form-title">
+					<label for="newsletter-email">{{ 'general.newsletter_form.header_text' | t }}</label>
+				</div>
+		    <div id="newsletter-email-field-with-button">
+					<input type="email" class="email form-control" placeholder="{{ 'general.newsletter_form.newsletter_text' | t }}" id="newsletter-email" name="contact[email]" />
+		    	<input type="submit" class="btn btn-default" value="{{ 'general.newsletter_form.submit' | t }}" />
+				</div>
+		  </div>
+		{% endform %}
+
+	</div>
+
+</div>
+<!-- End Newsletter -->
+
+</div>
+
+</footer>
