@@ -94,7 +94,7 @@ Shopify.Product.prototype.optionValues = function(index) {
 Shopify.Product.prototype.getVariant = function(selectedValues) {
   var found = null;
   if (selectedValues.length != this.options.length) { return found; }
-  
+
   Shopify.each(this.variants, function(variant) {
     var satisfied = true;
     for (var j = 0; j < selectedValues.length; j++) {
@@ -118,7 +118,7 @@ Shopify.Product.prototype.getVariant = function(selectedValues) {
 // ---------------------------------------------------------------------------
 // Money format handler
 // ---------------------------------------------------------------------------
-Shopify.money_format = "$ {{amount}}";
+Shopify.money_format = "{{amount_no_decimals}}";
 Shopify.formatMoney = function(cents, format) {
   if (typeof cents == 'string') cents = cents.replace('.','');
   var value = '';
@@ -146,14 +146,14 @@ Shopify.formatMoney = function(cents, format) {
   return formatString.replace(patt, value);
 };
 
-function floatToString(numeric, decimals) {  
-  var amount = numeric.toFixed(decimals).toString();  
+function floatToString(numeric, decimals) {
+  var amount = numeric.toFixed(decimals).toString();
   if(amount.match(/^\.\d+/)) {return "0"+amount; }
   else { return amount; }
 };
 // ---------------------------------------------------------------------------
 // OptionSelectors(domid, options)
-// 
+//
 // ---------------------------------------------------------------------------
 Shopify.OptionSelectors = function(existingSelectorId, options) {
   this.selectorDivClass       = 'selector-wrapper';
@@ -165,7 +165,7 @@ Shopify.OptionSelectors = function(existingSelectorId, options) {
   this.domIdPrefix       = existingSelectorId;
   this.product           = new Shopify.Product(options.product);
   this.onVariantSelected = Shopify.isDefined(options.onVariantSelected) ? options.onVariantSelected : function(){};
-  
+
   this.replaceSelector(existingSelectorId); // create the dropdowns
   this.selectors[0].element.onchange();     // init the new dropdown
   return true;
@@ -219,7 +219,7 @@ Shopify.OptionSelectors.prototype.buildSelectors = function() {
       label.htmlFor = selector.element.id;
       label.innerHTML = selector.name;
       div.appendChild(label);
-    } 
+    }
     div.appendChild(selector.element);
     return div;
   });
@@ -247,12 +247,12 @@ Shopify.OptionSelectors.prototype.updateSelectors = function(index) {
   } else {
     this.variantIdField.disabled = true;
   }
-  this.onVariantSelected(variant, this);  // callback 
+  this.onVariantSelected(variant, this);  // callback
 };
 
 // ---------------------------------------------------------------------------
 // OptionSelectorsFromDOM(domid, options)
-// 
+//
 // ---------------------------------------------------------------------------
 
 Shopify.OptionSelectorsFromDOM = function(existingSelectorId, options){
@@ -294,8 +294,8 @@ Shopify.OptionSelectorsFromDOM.prototype.createProductFromSelector = function(do
       var optionOptionValues = chunks.slice(0, optionCount);
       var message = (priceFieldExists ? chunks[optionCount] : '');
       var variantId = option.getAttribute('value');
-      
-      var attributes = { 
+
+      var attributes = {
         available: (option.disabled ? false : true),
         id:  parseFloat(option.value),
         price: message,
